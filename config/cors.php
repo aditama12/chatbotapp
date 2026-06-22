@@ -8,7 +8,8 @@ return [
     'allowed_origins' => [
         'http://localhost:5173',
         'http://127.0.0.1:5173',
-        'https://sakti-delta.vercel.app' // 👈 TAMBAHKAN URL VERCEL KAMU DI SINI
+        'https://sakti-delta.vercel.app',
+        'https://sakti-j92w9inzx-mas-adits-projects.vercel.app'
     ],
 
     'allowed_origins_patterns' => [],
