@@ -15,25 +15,22 @@ return [
     |
     */
 
-    // Biarkan paths ini sesuai dengan yang kamu butuhkan
-    'paths' => ['api/*', 'login', 'logout', 'sanctum/csrf-cookie', 'mimin/*', 'user/*'],
+    'paths' => ['api/*', 'sanctum/csrf-cookie'],
 
-    // Izinkan semua metode (GET, POST, PUT, DELETE, OPTIONS)
     'allowed_methods' => ['*'],
 
-    // UBAH INI JADI BINTANG: Izinkan semua domain frontend
+    // 🚀 UBAH JADI BINTANG: Mengizinkan request dari domain frontend mana pun
     'allowed_origins' => ['*'],
 
     'allowed_origins_patterns' => [],
 
-    // Izinkan semua header (terutama header 'Authorization' untuk token kita)
     'allowed_headers' => ['*'],
 
     'exposed_headers' => [],
 
     'max_age' => 0,
 
-    // INI YANG PALING PENTING: Wajib FALSE karena kita pakai Bearer Token, bukan Cookie
+    // 🚀 WAJIB FALSE: Karena kita menggunakan Bearer Token murni, bukan Session/Cookie
     'supports_credentials' => false,
 
 ];

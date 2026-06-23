@@ -12,9 +12,8 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        // 🚀 KEMBALIKAN KODE INI AGAR RAILWAY & CORS LANCAR
+        // 🚀 WAJIB UNTUK RAILWAY: Mempercayai reverse proxy agar HTTPS terdeteksi sempurna
         $middleware->trustProxies(at: '*');
-        $middleware->append(\Illuminate\Http\Middleware\HandleCors::class);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
