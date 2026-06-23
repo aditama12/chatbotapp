@@ -10,32 +10,22 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthenticatedSessionController extends Controller
 {
-    public function store(LoginRequest $request): JsonResponse
+public function store(LoginRequest $request)
     {
         $request->authenticate();
 
-        /** @var \App\Models\User $user */
-        $user = Auth::user();
+        // Ambil data user yang berhasil login
+        $user = $request->user();
 
-        // 🚀 VALIDASI SUPER KETAT: Jika ini request dari halaman Admin, pastikan akunnya benar-benar Admin!
-        if ($request->has('role') && $request->role === 'admin') {
-            if ($user->role !== 'admin') {
-                Auth::guard('web')->logout(); // Batalkan sesi
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Akses Ditolak! Akun email ini terdaftar sebagai User biasa, bukan Admin.'
-                ], 403);
-            }
-        }
+        // Buat Bearer Token baru
+        $token = $user->createToken('admin-token')->plainTextToken;
 
-        // Generate Token API
-        $token = $user->createToken('auth_token')->plainTextToken;
-
+        // Kembalikan token ke React dalam bentuk JSON
         return response()->json([
-            'success' => true, // 👈 INI WAJIB TRUE AGAR REACT MENGENALI LOGIN BERHASIL
+            'success' => true,
             'message' => 'Login berhasil',
-            'user' => $user,
-            'token' => $token
+            'token' => $token, // 👈 Ini yang ditangkap oleh response.data.token
+            'user' => $user
         ], 200);
     }
 
