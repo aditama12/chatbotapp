@@ -1,27 +1,43 @@
+<?php
+
+namespace App\Http\Controllers\Auth;
+
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Auth\LoginRequest;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 
-public function store(Request $request): JsonResponse
+class AuthenticatedSessionController extends Controller
 {
-$request->validate([
-'email' => 'required|email',
-'password' => 'required',
-]);
+    public function store(LoginRequest $request): JsonResponse
+    {
+        $request->authenticate();
 
-$user = User::where('email', $request->email)->first();
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
 
-if (!$user || !Hash::check($request->password, $user->password)) {
-return response()->json([
-'message' => 'Email atau password salah'
-], 401);
-}
+        $token = $user->createToken('auth_token')->plainTextToken;
 
-$token = $user->createToken('auth_token')->plainTextToken;
+        return response()->json([
+            'message' => 'Login berhasil',
+            'user' => $user,
+            'token' => $token
+        ], 200);
+    }
 
-return response()->json([
-'message' => 'Login berhasil',
-'user' => $user,
-'token' => $token
-]);
+    public function destroy(Request $request): JsonResponse
+    {
+        /** @var \App\Models\User|null $user */
+        $user = $request->user();
+
+        if ($user && $user->currentAccessToken()) {
+            $user->tokens()->where('id', $user->currentAccessToken()->id)->delete();
+        }
+
+        return response()->json([
+            'message' => 'Logout berhasil'
+        ], 200);
+    }
 }

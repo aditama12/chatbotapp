@@ -8,11 +8,16 @@ use App\Http\Controllers\AdminChatController;
 use App\Http\Controllers\PasswordResetController;
 use Illuminate\Http\Request;
 
+
 // Rute Publik (Tidak butuh token)
 Route::post('/login', [AuthenticatedSessionController::class, 'store']);
 Route::post('/register', [RegisteredUserController::class, 'store']);
 Route::post('/password/reset-link', [PasswordResetController::class, 'sendResetLinkEmail']);
 Route::post('/password/reset', [PasswordResetController::class, 'resetPassword']);
+Route::middleware(['api'])->group(function () {
+    Route::post('/chatbot/send', [ChatbotController::class, 'send']);
+    Route::post('/chatbot/escalated/{chatId}/follow-up', [AdminChatController::class, 'addFollowUpMessage']);
+});
 
 // Rute User yang DIamankan (Wajib bawa token)
 Route::middleware('auth:sanctum')->group(function () {
