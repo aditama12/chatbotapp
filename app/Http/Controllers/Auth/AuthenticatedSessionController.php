@@ -12,19 +12,20 @@ class AuthenticatedSessionController extends Controller
 {
 public function store(LoginRequest $request)
     {
+        // 1. Cek email dan password (akan otomatis dilempar kalau salah)
         $request->authenticate();
 
-        // Ambil data user yang berhasil login
-        $user = $request->user();
+        // 2. AMBIL USER MANUAL DARI DATABASE (Karena kita tidak pakai session)
+        $user = \App\Models\User::where('email', $request->email)->first();
 
-        // Buat Bearer Token baru
+        // 3. Buat Bearer Token baru
         $token = $user->createToken('admin-token')->plainTextToken;
 
-        // Kembalikan token ke React dalam bentuk JSON
+        // 4. Kembalikan token ke React dalam bentuk JSON
         return response()->json([
             'success' => true,
             'message' => 'Login berhasil',
-            'token' => $token, // 👈 Ini yang ditangkap oleh response.data.token
+            'token' => $token,
             'user' => $user
         ], 200);
     }
