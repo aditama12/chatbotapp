@@ -13,6 +13,8 @@ Route::post('/login', [AuthenticatedSessionController::class, 'store']);
 Route::post('/register', [RegisteredUserController::class, 'store']);
 Route::post('/password/reset-link', [PasswordResetController::class, 'sendResetLinkEmail']);
 Route::post('/password/reset', [PasswordResetController::class, 'resetPassword']);
+// Polling balasan admin — publik, chatId cukup sebagai identifier
+Route::get('/chatbot/escalated/{chatId}/status', [AdminChatController::class, 'getStatusForUser']);
 
 // Rute User yang Diamankan (Wajib bawa token)
 Route::middleware('auth:sanctum')->group(function () {
@@ -24,8 +26,6 @@ Route::middleware('auth:sanctum')->group(function () {
     // 🚀 Rute Chat User yang Benar
     Route::post('/chatbot/send', [ChatbotController::class, 'send']);
     Route::post('/chatbot/escalated/{chatId}/follow-up', [AdminChatController::class, 'addFollowUpMessage']);
-    // Polling status & balasan admin untuk user
-    Route::get('/chatbot/escalated/{chatId}/status', [AdminChatController::class, 'getStatusForUser']);
 });
 
 // Admin routes
