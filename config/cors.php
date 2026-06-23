@@ -5,11 +5,8 @@ return [
 
     'allowed_methods' => ['*'],
 
-    // 🚀 GANTI BINTANG JADI URL SPESIFIK FRONTEND KAMU (Hapus garis miring di akhir URL jika ada)
-    'allowed_origins' => [
-        'https://frontendapp-production-3259.up.railway.app',
-        'http://localhost:5173'
-    ],
+    // 1. Ubah menjadi wildcard agar menerima request dari domain manapun (termasuk Railway frontend)
+    'allowed_origins' => ['*'],
 
     'allowed_origins_patterns' => [],
 
@@ -19,6 +16,6 @@ return [
 
     'max_age' => 0,
 
-    // 🚀 KITA NYALAKAN LAGI AGAR BROWSER TIDAK MARAH
-    'supports_credentials' => true,
+    // 2. WAJIB diubah menjadi false agar server tidak bertengkar dengan browser
+    'supports_credentials' => false,
 ];
