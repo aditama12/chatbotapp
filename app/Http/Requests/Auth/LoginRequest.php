@@ -7,6 +7,7 @@ use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\Hash; // ← TAMBAH INI
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
@@ -38,29 +39,25 @@ class LoginRequest extends FormRequest
      *
      * @throws ValidationException
      */
-    public function authenticate(): void
-    {
-        $this->ensureIsNotRateLimited();
+   public function authenticate(): void
+{
+    $this->ensureIsNotRateLimited();
 
-        $role = $this->input('role', 'user');
+    $user = \App\Models\User::where('email', $this->email)->first();
 
-        if (! Auth::attempt(
-            [
-                'email' => $this->email,
-                'password' => $this->password,
-                'role' => $role,
-            ],
-            $this->boolean('remember')
-        )) {
-            RateLimiter::hit($this->throttleKey());
+    if (! $user || ! Hash::check($this->password, $user->password)) {
+        RateLimiter::hit($this->throttleKey());
 
-            throw ValidationException::withMessages([
-                'email' => trans('auth.failed'),
-            ]);
-        }
-
-        RateLimiter::clear($this->throttleKey());
+        throw ValidationException::withMessages([
+            'email' => trans('auth.failed'),
+        ]);
     }
+
+    RateLimiter::clear($this->throttleKey());
+
+    // simpan user sementara (optional)
+    Auth::login($user); // boleh, tapi TIDAK bikin session CSRF aktif di API flow
+}
 
     /**
      * Ensure the login request is not rate limited.
