@@ -81,7 +81,8 @@ class ChatbotController extends Controller
             'tidak memiliki informasi',
             'tidak dapat',
             'error',
-            'i don\'t have'
+            'i don\'t have',
+            'mengalami gangguan' // <-- TAMBAH INI AGAR KALAU DOCSBOT LIMIT HABIS (429), LANGSUNG DIALIHKAN
         ];
 
         $answer_lower = strtolower($answer);
