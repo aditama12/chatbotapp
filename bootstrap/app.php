@@ -12,7 +12,7 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        // 🚀 KEMBALIKAN KODE INI AGAR TIDAK LOADING TERUS DI RAILWAY
+        // 🚀 KEMBALIKAN KODE INI AGAR RAILWAY & CORS LANCAR
         $middleware->trustProxies(at: '*');
         $middleware->append(\Illuminate\Http\Middleware\HandleCors::class);
     })

@@ -8,19 +8,11 @@ use App\Http\Controllers\AdminChatController;
 use App\Http\Controllers\PasswordResetController;
 use Illuminate\Http\Request;
 
-
-// Rute Publik (Tidak butuh token)
+// Rute Publik
 Route::post('/login', [AuthenticatedSessionController::class, 'store']);
 Route::post('/register', [RegisteredUserController::class, 'store']);
 Route::post('/password/reset-link', [PasswordResetController::class, 'sendResetLinkEmail']);
 Route::post('/password/reset', [PasswordResetController::class, 'resetPassword']);
-
-// Rute Chatbot Publik
-Route::middleware(['api'])->group(function () {
-    Route::post('/chatbot/send', [ChatbotController::class, 'send']);
-    Route::post('/chatbot/escalated/{chatId}/follow-up', [AdminChatController::class, 'addFollowUpMessage']);
-    Route::get('/chatbot/escalated', [AdminChatController::class, 'getChatDetailForUser']);
-});
 
 // Rute User yang Diamankan (Wajib bawa token)
 Route::middleware('auth:sanctum')->group(function () {
@@ -28,15 +20,17 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
-    // ❌ Rute chatbot duplikat Dihapus dari sini
+
+    // 🚀 Rute Chat User yang Benar
+    Route::post('/chatbot/send', [ChatbotController::class, 'send']);
+    Route::post('/chatbot/escalated/{chatId}/follow-up', [AdminChatController::class, 'addFollowUpMessage']);
 });
 
 // Admin routes
 Route::prefix('mimin')->group(function () {
-    // Login admin (Publik)
     Route::post('/login', [AuthenticatedSessionController::class, 'store']);
 
-    // 🚀 KEMBALIKAN ADMIN MIDDLEWARE DI SINI AGAR DATA BISA DIBACA!
+    // 🚀 Rute Admin yang Benar
     Route::middleware(['auth:sanctum', \App\Http\Middleware\AdminMiddleware::class])->group(function () {
         Route::post('/logout', [AuthenticatedSessionController::class, 'destroy']);
         Route::get('/chats/escalated', [AdminChatController::class, 'getEscalatedChats']);
