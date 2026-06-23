@@ -1,21 +1,14 @@
 <?php
 
 return [
-
-    /*
-    |--------------------------------------------------------------------------
-    | Cross-Origin Resource Sharing (CORS) Configuration
-    |--------------------------------------------------------------------------
-    */
-
-    'paths' => ['api/*', 'login', 'logout', 'sanctum/csrf-cookie', 'mimin/*', 'user/*'],
+    'paths' => ['api/*', 'login', 'logout', 'sanctum/csrf-cookie', 'mimin/*', 'user/*', 'chatbot/*'],
 
     'allowed_methods' => ['*'],
 
-    // 🚀 1. GANTI BINTANG MENJADI URL FRONTEND KAMU SECARA SPESIFIK
+    // 🚀 GANTI BINTANG JADI URL SPESIFIK FRONTEND KAMU (Hapus garis miring di akhir URL jika ada)
     'allowed_origins' => [
         'https://frontendapp-production-3259.up.railway.app',
-        'http://localhost:5173' // Biarkan localhost agar bisa dites di komputer
+        'http://localhost:5173'
     ],
 
     'allowed_origins_patterns' => [],
@@ -26,7 +19,6 @@ return [
 
     'max_age' => 0,
 
-    // 🚀 2. NYALAKAN KEMBALI KREDENSIAL AGAR BROWSER TIDAK MARAH
+    // 🚀 KITA NYALAKAN LAGI AGAR BROWSER TIDAK MARAH
     'supports_credentials' => true,
-
 ];
