@@ -8,10 +8,7 @@ return [
 
     // Gunakan env variable agar bisa ganti tanpa ubah kode.
     // Di Railway, set: FRONTEND_URL=https://frontendapp-production-3259.up.railway.app
-    'allowed_origins' => array_filter([
-        env('FRONTEND_URL'),
-        env('APP_URL'),
-    ]),
+    'allowed_origins' => ['*'],
 
     'allowed_origins_patterns' => [],
 
@@ -22,7 +19,6 @@ return [
 
     'max_age' => 0,
 
-    // true diperlukan agar browser mengirimkan Authorization header / cookie
-    // pada cross-origin request (beda domain frontend & backend)
-    'supports_credentials' => true,
+    // Set false karena kita menggunakan Bearer Token, bukan cookie stateful
+    'supports_credentials' => false,
 ];
