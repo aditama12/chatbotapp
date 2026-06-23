@@ -17,11 +17,22 @@ class AuthenticatedSessionController extends Controller
         /** @var \App\Models\User $user */
         $user = Auth::user();
 
-        // Generate Token untuk API React
+        // 🚀 VALIDASI SUPER KETAT: Jika ini request dari halaman Admin, pastikan akunnya benar-benar Admin!
+        if ($request->has('role') && $request->role === 'admin') {
+            if ($user->role !== 'admin') {
+                Auth::guard('web')->logout(); // Batalkan sesi
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Akses Ditolak! Akun email ini terdaftar sebagai User biasa, bukan Admin.'
+                ], 403);
+            }
+        }
+
+        // Generate Token API
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([
-            'success' => true,  // 🚀 INI WAJIB ADA AGAR REACT BISA MENYIMPAN TOKEN
+            'success' => true, // 👈 INI WAJIB TRUE AGAR REACT MENGENALI LOGIN BERHASIL
             'message' => 'Login berhasil',
             'user' => $user,
             'token' => $token
@@ -37,11 +48,10 @@ class AuthenticatedSessionController extends Controller
             $user->tokens()->where('id', $user->currentAccessToken()->id)->delete();
         }
 
-        // Hapus juga sesi web bawaan Laravel agar bersih 100%
         Auth::guard('web')->logout();
 
         return response()->json([
-            'success' => true, // 🚀 INI JUGA WAJIB ADA
+            'success' => true,
             'message' => 'Logout berhasil'
         ], 200);
     }

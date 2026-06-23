@@ -10,18 +10,19 @@ class AdminMiddleware
 {
     public function handle(Request $request, Closure $next): Response
     {
-        // 🚀 Ambil data user langsung dari Token API, bukan dari Cookie
         $user = $request->user();
 
-        // Cek apakah tokennya valid DAN role-nya adalah admin
+        // Cek apakah token ada dan role adalah admin
         if ($user && $user->role === 'admin') {
             return $next($request);
         }
 
-        // Jika gagal, tolak dengan JSON yang bersih agar terbaca oleh React
+        // Jika gagal, beritahu React apa role aslinya agar mudah dilacak
+        $roleSaatIni = $user ? $user->role : 'Token Tidak Valid';
+
         return response()->json([
             'success' => false,
-            'message' => 'Akses ditolak. Anda bukan admin.'
+            'message' => 'Akses ditolak oleh sistem. Role akun Anda saat ini adalah: ' . $roleSaatIni
         ], 403);
     }
 }
