@@ -29,7 +29,7 @@ class AdminChatController extends Controller
                     'bot_reply' => $chat->reply,
                     'escalation_reason' => $chat->escalation_reason,
                     // 👈 UBAH INI biar indikator jam di sidebar juga ikut update
-                    'escalated_at' => $chat->updated_at, 
+                    'escalated_at' => $chat->updated_at,
                     'status' => $chat->admin_status,
                     'unread' => true
                 ];
@@ -128,7 +128,7 @@ class AdminChatController extends Controller
         $adminId = Auth::id() ?? 1;
 
         // FIX: Pake null-safe operator (?->) biar aman dari error 500
-        $adminName = Auth::user()?->name ?? 'Admin Disdukcapil'; 
+        $adminName = Auth::user()?->name ?? 'Admin Disdukcapil';
 
         // Buat admin reply baru
         $adminReply = AdminReply::create([
@@ -237,12 +237,12 @@ class AdminChatController extends Controller
     {
         // Hitung total metrik dari database, pastikan HANYA ngitung yang beneran di-escalate
         $totalChat = Chat::whereNotNull('escalated_at')->count();
-        
+
         // 👉 FIX: Tambahin whereNotNull('escalated_at') biar chat dummy/error zaman dulu ga keikut!
         $pendingChat = Chat::where('admin_status', 'pending')
                            ->whereNotNull('escalated_at')
                            ->count();
-                           
+
         $resolvedChat = Chat::where('admin_status', 'resolved')
                             ->whereNotNull('escalated_at')
                             ->count();
@@ -258,8 +258,8 @@ class AdminChatController extends Controller
                     'id' => $chat->id,
                     'user' => $chat->user->name ?? 'User Anonim',
                     'message' => $chat->message,
-                    'time' => $chat->updated_at, 
-                    'status' => $chat->admin_status, 
+                    'time' => $chat->updated_at,
+                    'status' => $chat->admin_status,
                 ];
             });
 
@@ -291,7 +291,7 @@ class AdminChatController extends Controller
                     'user_email' => $chat->user->email ?? '-',
                     'message' => $chat->message,
                     'bot_reply' => $chat->reply,
-                    'status' => $chat->admin_status, 
+                    'status' => $chat->admin_status,
                     'escalated_at' => $chat->escalated_at,
                     'created_at' => $chat->created_at,
                 ];
@@ -300,6 +300,30 @@ class AdminChatController extends Controller
         return response()->json([
             'success' => true,
             'data' => $chats
+        ]);
+    }
+    /**
+     * Ambil detail chat untuk dilihat oleh sisi User (Publik/Guest)
+     */
+    public function getChatDetailForUser($chatId)
+    {
+        $chat = Chat::with('adminReplies.admin')->findOrFail($chatId);
+
+        $adminReplies = $chat->adminReplies()->orderBy('created_at', 'asc')->get()->map(function ($reply) {
+            return [
+                'message' => $reply->message,
+                'created_at' => $reply->created_at
+            ];
+        });
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'chat' => [
+                    'status' => $chat->admin_status,
+                ],
+                'admin_replies' => $adminReplies,
+            ]
         ]);
     }
 }

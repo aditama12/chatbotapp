@@ -19,6 +19,7 @@ Route::post('/password/reset', [PasswordResetController::class, 'resetPassword']
 Route::middleware(['api'])->group(function () {
     Route::post('/chatbot/send', [ChatbotController::class, 'send']);
     Route::post('/chatbot/escalated/{chatId}/follow-up', [AdminChatController::class, 'addFollowUpMessage']);
+    Route::get('/chatbot/escalated', [AdminChatController::class, 'getChatDetailForUser']);
 });
 
 // Rute User yang Diamankan (Wajib bawa token)
