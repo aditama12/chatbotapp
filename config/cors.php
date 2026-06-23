@@ -6,21 +6,17 @@ return [
     |--------------------------------------------------------------------------
     | Cross-Origin Resource Sharing (CORS) Configuration
     |--------------------------------------------------------------------------
-    |
-    | Here you may configure your settings for cross-origin resource sharing
-    | or "CORS". This determines what cross-origin operations may execute
-    | in web browsers. You are free to adjust these settings as needed.
-    |
-    | To learn more: https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS
-    |
     */
 
-    'paths' => ['api/*', 'sanctum/csrf-cookie'],
+    'paths' => ['api/*', 'login', 'logout', 'sanctum/csrf-cookie', 'mimin/*', 'user/*'],
 
     'allowed_methods' => ['*'],
 
-    // 🚀 UBAH JADI BINTANG: Mengizinkan request dari domain frontend mana pun
-    'allowed_origins' => ['*'],
+    // 🚀 1. GANTI BINTANG MENJADI URL FRONTEND KAMU SECARA SPESIFIK
+    'allowed_origins' => [
+        'https://frontendapp-production-3259.up.railway.app',
+        'http://localhost:5173' // Biarkan localhost agar bisa dites di komputer
+    ],
 
     'allowed_origins_patterns' => [],
 
@@ -30,7 +26,7 @@ return [
 
     'max_age' => 0,
 
-    // 🚀 WAJIB FALSE: Karena kita menggunakan Bearer Token murni, bukan Session/Cookie
-    'supports_credentials' => false,
+    // 🚀 2. NYALAKAN KEMBALI KREDENSIAL AGAR BROWSER TIDAK MARAH
+    'supports_credentials' => true,
 
 ];
