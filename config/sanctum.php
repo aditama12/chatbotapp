@@ -6,19 +6,16 @@ use Laravel\Sanctum\Http\Middleware\AuthenticateSession;
 use Laravel\Sanctum\Sanctum;
 
 return [
-
     /*
     |--------------------------------------------------------------------------
     | Stateful Domains
     |--------------------------------------------------------------------------
-    |
-    | Requests from the following domains / hosts will receive stateful API
-    | authentication cookies. Typically, these should include your local
-    | and production domains which access your API via a frontend SPA.
-    |
     */
 
-    'stateful' => [],
+    'stateful' => [
+        'frontendapp-production-3259.up.railway.app',
+        'localhost:5173', // Tambahkan localhost juga agar tetap bisa dites di komputer lokal
+    ],
 
     /*
     |--------------------------------------------------------------------------
