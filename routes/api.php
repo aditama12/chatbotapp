@@ -24,6 +24,8 @@ Route::middleware('auth:sanctum')->group(function () {
     // 🚀 Rute Chat User yang Benar
     Route::post('/chatbot/send', [ChatbotController::class, 'send']);
     Route::post('/chatbot/escalated/{chatId}/follow-up', [AdminChatController::class, 'addFollowUpMessage']);
+    // Polling status & balasan admin untuk user
+    Route::get('/chatbot/escalated/{chatId}/status', [AdminChatController::class, 'getStatusForUser']);
 });
 
 // Admin routes

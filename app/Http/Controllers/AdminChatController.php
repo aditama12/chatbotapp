@@ -326,4 +326,35 @@ class AdminChatController extends Controller
             ]
         ]);
     }
+
+    /**
+     * Ambil status chat + balasan admin untuk sisi User (polling)
+     * Dipanggil oleh frontend setiap ~4 detik
+     */
+    public function getStatusForUser($chatId)
+    {
+        $chat = Chat::with('adminReplies')->findOrFail($chatId);
+
+        $adminReplies = $chat->adminReplies()
+            ->orderBy('created_at', 'asc')
+            ->get()
+            ->map(function ($reply) {
+                return [
+                    'id'         => $reply->id,
+                    'message'    => $reply->message,
+                    'created_at' => $reply->created_at,
+                ];
+            });
+
+        return response()->json([
+            'success' => true,
+            'data'    => [
+                'chat'         => [
+                    'id'     => $chat->id,
+                    'status' => $chat->admin_status,
+                ],
+                'admin_replies' => $adminReplies,
+            ]
+        ]);
+    }
 }
