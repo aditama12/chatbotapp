@@ -12,10 +12,8 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        // 1. Mempercayai HTTPS proxy Railway
+        // 🚀 KEMBALIKAN KODE INI AGAR TIDAK LOADING TERUS DI RAILWAY
         $middleware->trustProxies(at: '*');
-
-        // 2. Tambahkan handler CORS eksplisit
         $middleware->append(\Illuminate\Http\Middleware\HandleCors::class);
     })
     ->withExceptions(function (Exceptions $exceptions) {

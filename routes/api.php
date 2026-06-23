@@ -14,22 +14,20 @@ Route::post('/login', [AuthenticatedSessionController::class, 'store']);
 Route::post('/register', [RegisteredUserController::class, 'store']);
 Route::post('/password/reset-link', [PasswordResetController::class, 'sendResetLinkEmail']);
 Route::post('/password/reset', [PasswordResetController::class, 'resetPassword']);
+
+// Rute Chatbot Publik
 Route::middleware(['api'])->group(function () {
     Route::post('/chatbot/send', [ChatbotController::class, 'send']);
     Route::post('/chatbot/escalated/{chatId}/follow-up', [AdminChatController::class, 'addFollowUpMessage']);
 });
 
-// Rute User yang DIamankan (Wajib bawa token)
+// Rute User yang Diamankan (Wajib bawa token)
 Route::middleware('auth:sanctum')->group(function () {
-    // 👇 Pindah ke sini
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy']);
-
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
-
-    Route::post('/chatbot/send', [ChatbotController::class, 'send']);
-    Route::post('/chatbot/escalated/{chatId}/follow-up', [AdminChatController::class, 'addFollowUpMessage']);
+    // ❌ Rute chatbot duplikat Dihapus dari sini
 });
 
 // Admin routes
@@ -37,9 +35,8 @@ Route::prefix('mimin')->group(function () {
     // Login admin (Publik)
     Route::post('/login', [AuthenticatedSessionController::class, 'store']);
 
-    // 🚀 PASANG ADMIN MIDDLEWARE DI SINI
+    // 🚀 KEMBALIKAN ADMIN MIDDLEWARE DI SINI AGAR DATA BISA DIBACA!
     Route::middleware(['auth:sanctum', \App\Http\Middleware\AdminMiddleware::class])->group(function () {
-
         Route::post('/logout', [AuthenticatedSessionController::class, 'destroy']);
         Route::get('/chats/escalated', [AdminChatController::class, 'getEscalatedChats']);
         Route::get('/chats/{chatId}', [AdminChatController::class, 'getChatDetail']);
@@ -48,6 +45,5 @@ Route::prefix('mimin')->group(function () {
         Route::get('/user/{userId}/chats', [AdminChatController::class, 'getUserChats']);
         Route::get('/dashboard', [AdminChatController::class, 'getDashboardStats']);
         Route::get('/history', [AdminChatController::class, 'getHistory']);
-
     });
 });
