@@ -9,6 +9,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Auth\Passwords\CanResetPassword;
 use Laravel\Sanctum\HasApiTokens; // 👈 1. Tambahkan ini
 
+
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */

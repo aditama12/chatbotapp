@@ -37,11 +37,10 @@ Route::prefix('mimin')->group(function () {
     // Login admin (Publik)
     Route::post('/login', [AuthenticatedSessionController::class, 'store']);
 
-    // Rute Admin yang Diamankan (Wajib bawa token)
-    Route::middleware('auth:sanctum')->group(function () {
-        // 👇 Pindah ke sini juga
-        Route::post('/logout', [AuthenticatedSessionController::class, 'destroy']);
+    // 🚀 PASANG ADMIN MIDDLEWARE DI SINI
+    Route::middleware(['auth:sanctum', \App\Http\Middleware\AdminMiddleware::class])->group(function () {
 
+        Route::post('/logout', [AuthenticatedSessionController::class, 'destroy']);
         Route::get('/chats/escalated', [AdminChatController::class, 'getEscalatedChats']);
         Route::get('/chats/{chatId}', [AdminChatController::class, 'getChatDetail']);
         Route::post('/chats/{chatId}/reply', [AdminChatController::class, 'sendAdminReply']);
@@ -49,5 +48,6 @@ Route::prefix('mimin')->group(function () {
         Route::get('/user/{userId}/chats', [AdminChatController::class, 'getUserChats']);
         Route::get('/dashboard', [AdminChatController::class, 'getDashboardStats']);
         Route::get('/history', [AdminChatController::class, 'getHistory']);
+
     });
 });

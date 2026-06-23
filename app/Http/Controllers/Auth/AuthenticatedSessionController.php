@@ -7,7 +7,6 @@ use App\Http\Requests\Auth\LoginRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\User;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -18,9 +17,11 @@ class AuthenticatedSessionController extends Controller
         /** @var \App\Models\User $user */
         $user = Auth::user();
 
+        // Generate Token untuk API React
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([
+            'success' => true,  // 🚀 INI WAJIB ADA AGAR REACT BISA MENYIMPAN TOKEN
             'message' => 'Login berhasil',
             'user' => $user,
             'token' => $token
@@ -36,7 +37,11 @@ class AuthenticatedSessionController extends Controller
             $user->tokens()->where('id', $user->currentAccessToken()->id)->delete();
         }
 
+        // Hapus juga sesi web bawaan Laravel agar bersih 100%
+        Auth::guard('web')->logout();
+
         return response()->json([
+            'success' => true, // 🚀 INI JUGA WAJIB ADA
             'message' => 'Logout berhasil'
         ], 200);
     }
