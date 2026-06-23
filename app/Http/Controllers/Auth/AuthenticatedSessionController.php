@@ -1,48 +1,27 @@
-<?php
-
-namespace App\Http\Controllers\Auth;
-
-use App\Http\Controllers\Controller;
-use App\Http\Requests\Auth\LoginRequest;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use App\Models\User; // 👈 Jangan lupa import model User
+use Illuminate\Support\Facades\Hash;
+use App\Models\User;
 
-class AuthenticatedSessionController extends Controller
+public function store(Request $request): JsonResponse
 {
-    public function store(LoginRequest $request): JsonResponse
-    {
-        // 1. Validasi password & email
-        $request->authenticate();
+$request->validate([
+'email' => 'required|email',
+'password' => 'required',
+]);
 
-        // 2. Deklarasikan secara eksplisit kalau $user ini adalah model App\Models\User
-        /** @var \App\Models\User $user */
-        $user = Auth::user();
+$user = User::where('email', $request->email)->first();
 
-        // 3. Generate token
-        $token = $user->createToken('auth_token')->plainTextToken;
+if (!$user || !Hash::check($request->password, $user->password)) {
+return response()->json([
+'message' => 'Email atau password salah'
+], 401);
+}
 
-        return response()->json([
-            'message' => 'Login berhasil',
-            'user' => $user,
-            'token' => $token
-        ], 200);
-    }
+$token = $user->createToken('auth_token')->plainTextToken;
 
-    public function destroy(Request $request): JsonResponse
-    {
-        /** @var \App\Models\User|null $user */
-        $user = $request->user();
-
-        // Cek apakah user ada dan sedang punya token aktif
-        if ($user && $user->currentAccessToken()) {
-            // Hapus token berdasarkan ID token tersebut menggunakan relasi tokens()
-            $user->tokens()->where('id', $user->currentAccessToken()->id)->delete();
-        }
-
-        return response()->json([
-            'message' => 'Logout berhasil'
-        ], 200);
-    }
+return response()->json([
+'message' => 'Login berhasil',
+'user' => $user,
+'token' => $token
+]);
 }
