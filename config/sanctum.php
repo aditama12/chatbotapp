@@ -12,10 +12,7 @@ return [
     |--------------------------------------------------------------------------
     */
 
-    'stateful' => [
-        'frontendapp-production-3259.up.railway.app',
-        'localhost:5173', // Tambahkan localhost juga agar tetap bisa dites di komputer lokal
-    ],
+    'stateful' => [],
 
     /*
     |--------------------------------------------------------------------------
