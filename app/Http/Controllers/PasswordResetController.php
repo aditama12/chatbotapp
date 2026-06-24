@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Support\Str;
 use App\Models\User;
@@ -16,11 +18,31 @@ class PasswordResetController extends Controller
     {
         $request->validate(['email' => 'required|email']);
 
-        $status = Password::sendResetLink($request->only('email'));
+        try {
+            $status = Password::sendResetLink($request->only('email'));
 
-        return $status === Password::RESET_LINK_SENT
-                    ? response()->json(['success' => true, 'message' => 'Link reset password telah dikirim ke email Anda.'])
-                    : response()->json(['success' => false, 'message' => 'Email tidak ditemukan.'], 400);
+            Log::info('Password reset link status: ' . $status . ' for email: ' . $request->email);
+
+            if ($status === Password::RESET_LINK_SENT) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Link reset password telah dikirim ke email Anda.'
+                ]);
+            }
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Email tidak ditemukan atau tidak terdaftar.'
+            ], 400);
+
+        } catch (\Exception $e) {
+            Log::error('Password reset email error: ' . $e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal mengirim email. Silakan coba lagi. Error: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
     // 2. Fungsi memproses password baru
